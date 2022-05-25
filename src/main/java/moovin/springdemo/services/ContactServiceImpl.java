@@ -5,6 +5,7 @@ import moovin.springdemo.repository.ContactRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,13 +23,22 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public Contact createContact(Contact contact) {
-        return contactRepository.save(contact);
+    public List<Contact> getContacts() {
+        return contactRepository.findAll();
     }
 
     @Override
-    public Contact updateContact(Contact contact) {
-        return contactRepository.save(contact);
+    public Contact createContact(Contact contact) {
+        return contactRepository.saveAndFlush(contact);
+    }
+
+    @Override
+    public Optional<Contact> updateContact(Integer id, Contact contact) {
+        if (contactRepository.findById(id).isPresent()) {
+            contactRepository.saveAndFlush(contact);
+            return contactRepository.findById(contact.getId());
+        }
+        return Optional.empty();
     }
 
 
