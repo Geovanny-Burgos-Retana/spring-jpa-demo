@@ -41,5 +41,14 @@ public class ContactServiceImpl implements ContactService {
         return Optional.empty();
     }
 
+    @Override
+    public Optional<Integer> deleteContact(Integer id) {
+        if (contactRepository.findById(id).isPresent()) {
+            contactRepository.deleteById(id);
+            return Optional.of(id);
+        }
+        return Optional.empty();
+    }
+
 
 }

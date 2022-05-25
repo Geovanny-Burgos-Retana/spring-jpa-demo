@@ -124,4 +124,19 @@ public class ContactController {
         contactResultDTO.setMessage("OK");
         return new ResponseEntity<>(contactResultDTO, httpStatus);
     }
+
+    @DeleteMapping(value = "/{id}")
+    @ResponseBody
+    public ResponseEntity<ContactResultDTO> deleteContact(@PathVariable Integer id) {
+        HttpStatus httpStatus = HttpStatus.OK;
+        ContactResultDTO contactResultDTO = new ContactResultDTO();
+        Optional<Integer> contactDelete = contactService.deleteContact(id);
+        if (contactDelete.isEmpty()) {
+            contactResultDTO.setMessage("No existe contacto");
+            httpStatus = HttpStatus.NOT_FOUND;
+            return new ResponseEntity<>(contactResultDTO, httpStatus);
+        }
+        contactResultDTO.setMessage("OK");
+        return new ResponseEntity<>(contactResultDTO, httpStatus);
+    }
 }

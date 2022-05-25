@@ -13,4 +13,6 @@ public interface ContactService {
     Contact createContact(Contact contact);
 
     Optional<Contact> updateContact(Integer id, Contact contact);
+
+    Optional<Integer> deleteContact(Integer id);
 }
