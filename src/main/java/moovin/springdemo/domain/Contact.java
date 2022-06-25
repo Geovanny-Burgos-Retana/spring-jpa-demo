@@ -108,7 +108,7 @@ public class Contact {
         return "Contact{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", firstName='" + lastName + '\'' +
+                ", lastName='" + lastName + '\'' +
                 ", phone='" + phone + '\'' +
                 ", cellPhone='" + cellPhone + '\'' +
                 ", type='" + type + '\'' +

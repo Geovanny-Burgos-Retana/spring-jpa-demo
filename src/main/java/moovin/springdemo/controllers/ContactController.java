@@ -56,7 +56,7 @@ public class ContactController {
      * @return mensaje e información del contacto obtenido
      * @author Geovanny Burgos Retana
      */
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<ContactResultDTO> getContact(@PathVariable("id") Integer id) {
         HttpStatus httpStatus = HttpStatus.OK;
@@ -64,7 +64,7 @@ public class ContactController {
         Optional<Contact> contact = contactService.getContact(id);
         // Validación de que el Optional tenga un contacto
         if (contact.isEmpty()) {
-            contactResultDTO.setMessage("No existe contacto");
+            contactResultDTO.setMessage("No existe contacto a obtener");
             httpStatus = HttpStatus.NOT_FOUND;
             return new ResponseEntity<>(contactResultDTO, httpStatus);
         }
@@ -80,7 +80,7 @@ public class ContactController {
      * @return mensaje e información de todos los contactos
      * @author Geovanny Burgos Retana
      */
-    @GetMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<ContactsResultDTO> getContacts() {
         // todo si son mucho puede ser un dto con un atributo de lista de ids input
@@ -115,7 +115,7 @@ public class ContactController {
         Optional<Contact> contactUpdate = contactService.updateContact(id, contact);
         // Validación de que el Optional tenga un contacto
         if (contactUpdate.isEmpty()) {
-            contactResultDTO.setMessage("No existe contacto");
+            contactResultDTO.setMessage("No existe contacto a actualizar");
             httpStatus = HttpStatus.NOT_FOUND;
             return new ResponseEntity<>(contactResultDTO, httpStatus);
         }

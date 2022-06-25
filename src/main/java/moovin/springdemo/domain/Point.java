@@ -60,26 +60,17 @@ public class Point {
         this.address = address;
     }
 
-    @OneToMany(mappedBy = "reference", cascade = CascadeType.ALL)
-    public List<Contact> getContacts() {
-        return contacts;
-    }
-
-    public void setContacts(List<Contact> contacts) {
-        this.contacts = contacts;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Point point = (Point) o;
-        return Objects.equals(id, point.id) && Objects.equals(latitude, point.latitude) && Objects.equals(longitude, point.longitude) && Objects.equals(address, point.address) && Objects.equals(contacts, point.contacts);
+        return Objects.equals(id, point.id) && Objects.equals(latitude, point.latitude) && Objects.equals(longitude, point.longitude) && Objects.equals(address, point.address) && Objects.equals(getContacts(), point.getContacts());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, latitude, longitude, address, contacts);
+        return Objects.hash(id, latitude, longitude, address);
     }
 
     @Override
@@ -89,7 +80,25 @@ public class Point {
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 ", address='" + address + '\'' +
-                ", contacts=" + contacts +
+                ", contacts=" + getContacts() +
                 '}';
+    }
+
+    /**
+     * De esta manera genera la relación de un punto con varios contactos creando
+     * una tabla point_contacts como si fuera una relación n a n, causando que se
+     * puedan crear contactos que quedan en el aire sin ningún tipo de relación a
+     * algún punto
+     *
+     * @return lista de contactos del punto
+     */
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OrderBy("id asc")
+    public List<Contact> getContacts() {
+        return contacts;
+    }
+
+    public void setContacts(List<Contact> contacts) {
+        this.contacts = contacts;
     }
 }
