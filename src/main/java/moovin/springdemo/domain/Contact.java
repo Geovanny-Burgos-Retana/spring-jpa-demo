@@ -1,8 +1,10 @@
 package moovin.springdemo.domain;
 
-import com.sun.istack.NotNull;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.Objects;
 
 @Entity
@@ -14,8 +16,7 @@ public class Contact {
     private String lastName;
     private String phone;
     private String cellPhone;
-    private String type;
-    private Integer reference;
+    private ContactType type;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,6 +30,8 @@ public class Contact {
     }
 
     @Basic
+    @NotNull
+    @Length(min = 2, max = 100)
     @Column(name = "name", length = 100)
     public String getName() {
         return name;
@@ -39,6 +42,8 @@ public class Contact {
     }
 
     @Basic
+    @NotNull
+    @Length(min = 2, max = 100)
     @Column(name = "last_name", length = 100)
     public String getLastName() {
         return lastName;
@@ -49,6 +54,8 @@ public class Contact {
     }
 
     @Basic
+    @NotNull
+    @Pattern(regexp = "^[0-9]{8}$")
     @Column(name = "phone", length = 20)
     public String getPhone() {
         return phone;
@@ -59,6 +66,8 @@ public class Contact {
     }
 
     @Basic
+    @NotNull
+    @Pattern(regexp = "^[0-9]{8}$")
     @Column(name = "cell_phone", length = 20)
     public String getCellPhone() {
         return cellPhone;
@@ -69,25 +78,15 @@ public class Contact {
     }
 
     @Basic
+    @Enumerated(EnumType.STRING)
     @NotNull
     @Column(name = "type", nullable = false, length = 5)
-    public String getType() {
+    public ContactType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ContactType type) {
         this.type = type;
-    }
-
-    @Basic
-    @Column(name = "reference")
-    // todo: Agregar el not null. Merge de JPA
-    public Integer getReference() {
-        return reference;
-    }
-
-    public void setReference(Integer reference) {
-        this.reference = reference;
     }
 
     @Override
@@ -95,12 +94,12 @@ public class Contact {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Contact contact = (Contact) o;
-        return Objects.equals(id, contact.id) && Objects.equals(name, contact.name) && Objects.equals(lastName, contact.lastName) && Objects.equals(phone, contact.phone) && Objects.equals(cellPhone, contact.cellPhone) && Objects.equals(type, contact.type) && Objects.equals(reference, contact.reference);
+        return Objects.equals(id, contact.id) && Objects.equals(name, contact.name) && Objects.equals(lastName, contact.lastName) && Objects.equals(phone, contact.phone) && Objects.equals(cellPhone, contact.cellPhone) && Objects.equals(type, contact.type);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, lastName, phone, cellPhone, type, reference);
+        return Objects.hash(id, name, lastName, phone, cellPhone, type);
     }
 
     @Override
@@ -112,7 +111,6 @@ public class Contact {
                 ", phone='" + phone + '\'' +
                 ", cellPhone='" + cellPhone + '\'' +
                 ", type='" + type + '\'' +
-                ", reference=" + reference +
                 '}';
     }
 }

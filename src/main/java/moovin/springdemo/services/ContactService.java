@@ -10,7 +10,7 @@ public interface ContactService {
 
     List<Contact> getContacts();
 
-    Contact createContact(Contact contact);
+    Optional<Contact> createContact(Contact contact);
 
     Optional<Contact> updateContact(Integer id, Contact contact);
 

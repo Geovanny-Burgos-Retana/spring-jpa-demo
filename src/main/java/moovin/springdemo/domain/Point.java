@@ -1,6 +1,7 @@
 package moovin.springdemo.domain;
 
 import com.sun.istack.NotNull;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import java.util.List;
@@ -51,7 +52,8 @@ public class Point {
 
     @Basic
     @NotNull
-    @Column(name = "address", nullable = false)
+    @Length(min = 3, max = 512)
+    @Column(name = "address", nullable = false, length = 512)
     public String getAddress() {
         return address;
     }
@@ -85,14 +87,13 @@ public class Point {
     }
 
     /**
-     * De esta manera genera la relación de un punto con varios contactos creando
-     * una tabla point_contacts como si fuera una relación n a n, causando que se
-     * puedan crear contactos que quedan en el aire sin ningún tipo de relación a
-     * algún punto
+     * De esta manera genera la relación de un punto con varios contactos crea una
+     * llave foránea en la tabla de contactos que sería lo más recomendable
      *
      * @return lista de contactos del punto
      */
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_point", nullable = false)
     @OrderBy("id asc")
     public List<Contact> getContacts() {
         return contacts;

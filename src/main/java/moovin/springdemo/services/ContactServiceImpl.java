@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Service
 public class ContactServiceImpl implements ContactService {
@@ -28,8 +30,14 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public Contact createContact(Contact contact) {
-        return contactRepository.saveAndFlush(contact);
+    public Optional<Contact> createContact(Contact contact) {
+        try {
+            return Optional.of(contactRepository.saveAndFlush(contact));
+        } catch (Exception ex) {
+            Logger.getLogger(getClass().getName()
+            ).log(Level.SEVERE, null, ex);
+            return Optional.empty();
+        }
     }
 
     @Override

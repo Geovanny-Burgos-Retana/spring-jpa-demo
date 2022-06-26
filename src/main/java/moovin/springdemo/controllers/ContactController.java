@@ -40,11 +40,18 @@ public class ContactController {
         ContactResultDTO contactResultDTO = new ContactResultDTO();
         if (errors.hasErrors()) {
             contactResultDTO.setMessage("ERROR " + errors);
-            httpStatus = HttpStatus.BAD_REQUEST;
+            httpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
             return new ResponseEntity<>(contactResultDTO, httpStatus);
         }
         // Si pasa el if anterior significa el json enviado al endpoint tiene una estructura válida
-        contactResultDTO.setContact(contactService.createContact(contact));
+        Optional<Contact> contactCreated = contactService.createContact(contact);
+        // Validación de que el Optional tenga un contacto
+        if (contactCreated.isEmpty()) {
+            contactResultDTO.setMessage("Contact not created");
+            httpStatus = HttpStatus.NOT_FOUND;
+            return new ResponseEntity<>(contactResultDTO, httpStatus);
+        }
+        contactResultDTO.setContact(contactCreated.get());
         contactResultDTO.setMessage("OK");
         return new ResponseEntity<>(contactResultDTO, httpStatus);
     }
