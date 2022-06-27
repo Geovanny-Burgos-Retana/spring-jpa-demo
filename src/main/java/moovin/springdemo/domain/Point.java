@@ -87,13 +87,15 @@ public class Point {
     }
 
     /**
-     * De esta manera genera la relación de un punto con varios contactos crea una
-     * llave foránea en la tabla de contactos que sería lo más recomendable
+     * De esta manera genera la relación de un punto con varios contactos pero con
+     * una relación de manytomany en ambos lados genera una tabla de point_contacts
+     * y otro de contact_points generando que dependiendo de si se hace save de un
+     * punto o de un contacto, los puntos o contactos correspondientes al objeto se
+     * guarde en una u otra tabla lo cual no sería muy funcional
      *
      * @return lista de contactos del punto
      */
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_point", nullable = false)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OrderBy("id asc")
     public List<Contact> getContacts() {
         return contacts;

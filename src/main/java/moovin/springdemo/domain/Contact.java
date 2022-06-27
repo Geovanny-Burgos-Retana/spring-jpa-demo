@@ -5,6 +5,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -17,6 +18,7 @@ public class Contact {
     private String phone;
     private String cellPhone;
     private ContactType type;
+    private List<Point> points;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -112,5 +114,15 @@ public class Contact {
                 ", cellPhone='" + cellPhone + '\'' +
                 ", type='" + type + '\'' +
                 '}';
+    }
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OrderBy("id asc")
+    public List<Point> getPoints() {
+        return points;
+    }
+
+    public void setPoints(List<Point> points) {
+        this.points = points;
     }
 }
