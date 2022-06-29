@@ -117,7 +117,6 @@ public class Contact {
     }
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @OrderBy("id asc")
     public List<Point> getPoints() {
         return points;
     }
