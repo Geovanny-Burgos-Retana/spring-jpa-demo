@@ -1,6 +1,8 @@
 package moovin.springdemo.controllers;
 
 import moovin.springdemo.controllers.dto.PointResultDTO;
+import moovin.springdemo.controllers.dto.general.point.PointInput;
+import moovin.springdemo.controllers.dto.response.point.PointResponse;
 import moovin.springdemo.domain.Point;
 import moovin.springdemo.services.PointService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,27 +27,21 @@ public class PointController {
 
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<PointResultDTO> createPoint(@Valid @RequestBody Point point,
-                                                      Errors errors) {
+    public ResponseEntity<PointResponse> createPoint(@Valid @RequestBody PointInput pointInput,
+                                                     Errors errors) {
         HttpStatus httpStatus = HttpStatus.OK;
-        PointResultDTO pointResultDTO = new PointResultDTO();
+        PointResponse pointResponse = new PointResponse();
         if (errors.hasErrors()) {
-            pointResultDTO.setMessage("ERROR " + errors);
-            httpStatus = HttpStatus.BAD_REQUEST;
-            return new ResponseEntity<>(pointResultDTO, httpStatus);
+            pointResponse.setMessage("ERROR " + errors);
+            httpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
+            return new ResponseEntity<>(pointResponse, httpStatus);
         }
-        // Si pasa el if anterior significa el json enviado al endpoint tiene una estructura válida
-        Optional<Point> pointCreated = pointService.createPoint(point);
-        // Validación de que el Optional tenga un contacto
-        if (pointCreated.isEmpty()) {
-            pointResultDTO.setMessage("Point not created");
-            httpStatus = HttpStatus.NOT_FOUND;
-            return new ResponseEntity<>(pointResultDTO, httpStatus);
+        try {
+            pointResponse = pointService.createPoint(pointInput);
+        } catch (Exception ex) {
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         }
-        // Si pasa el if anterior significa que el optional tiene un objeto punto
-        pointResultDTO.setPoint(pointCreated.get());
-        pointResultDTO.setMessage("OK");
-        return new ResponseEntity<>(pointResultDTO, httpStatus);
+        return new ResponseEntity<>(pointResponse, httpStatus);
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -1,7 +1,11 @@
 package moovin.springdemo.controllers;
 
+import moovin.springdemo.common.ModelErrors;
 import moovin.springdemo.controllers.dto.ContactResultDTO;
 import moovin.springdemo.controllers.dto.ContactsResultDTO;
+import moovin.springdemo.controllers.dto.general.contact.ContactInput;
+import moovin.springdemo.controllers.dto.response.ErrorInfo;
+import moovin.springdemo.controllers.dto.response.contact.ContactResponse;
 import moovin.springdemo.domain.Contact;
 import moovin.springdemo.services.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,33 +31,28 @@ public class ContactController {
     /**
      * Crear un nuevo contacto
      *
-     * @param contact contacto establecido con los datos para crear
-     * @param errors  errores al momento de validar el @Valid @RequestBody
+     * @param contactInput contacto establecido con los datos para crear
+     * @param errors       errores al momento de validar el @Valid @RequestBody
      * @return mensaje e información del contacto creado
      * @author Geovanny Burgos Retana
      */
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<ContactResultDTO> createContact(@Valid @RequestBody Contact contact,
-                                                          Errors errors) {
+    public ResponseEntity<ContactResponse> createContact(@Valid @RequestBody ContactInput contactInput,
+                                                         Errors errors) {
         HttpStatus httpStatus = HttpStatus.OK;
-        ContactResultDTO contactResultDTO = new ContactResultDTO();
+        ContactResponse contactResponse = new ContactResponse();
         if (errors.hasErrors()) {
-            contactResultDTO.setMessage("ERROR " + errors);
+            contactResponse.setErrorInfo(new ErrorInfo("401", "Error en datos para crear contacto: " + new ModelErrors().getModelErrors(errors)));
             httpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
-            return new ResponseEntity<>(contactResultDTO, httpStatus);
+            return new ResponseEntity<>(contactResponse, httpStatus);
         }
-        // Si pasa el if anterior significa el json enviado al endpoint tiene una estructura válida
-        Optional<Contact> contactCreated = contactService.createContact(contact);
-        // Validación de que el Optional tenga un contacto
-        if (contactCreated.isEmpty()) {
-            contactResultDTO.setMessage("Contact not created");
-            httpStatus = HttpStatus.NOT_FOUND;
-            return new ResponseEntity<>(contactResultDTO, httpStatus);
+        try {
+            contactResponse = contactService.createContact(contactInput);
+        } catch (Exception ex) {
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         }
-        contactResultDTO.setContact(contactCreated.get());
-        contactResultDTO.setMessage("OK");
-        return new ResponseEntity<>(contactResultDTO, httpStatus);
+        return new ResponseEntity<>(contactResponse, httpStatus);
     }
 
     /**

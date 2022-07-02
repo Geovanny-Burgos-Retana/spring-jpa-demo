@@ -1,5 +1,7 @@
 package moovin.springdemo.services;
 
+import moovin.springdemo.controllers.dto.general.contact.ContactInput;
+import moovin.springdemo.controllers.dto.response.contact.ContactResponse;
 import moovin.springdemo.domain.Contact;
 
 import java.util.List;
@@ -10,7 +12,7 @@ public interface ContactService {
 
     List<Contact> getContacts();
 
-    Optional<Contact> createContact(Contact contact);
+    ContactResponse createContact(ContactInput contactInput);
 
     Optional<Contact> updateContact(Integer id, Contact contact);
 

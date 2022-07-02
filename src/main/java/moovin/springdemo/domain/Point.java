@@ -102,7 +102,7 @@ public class Point {
      * del contacto se obtenga el id del punto de los datos enviados y generar el punto que ya esta
      * en la DB y agregarle los contactos nuevos a la lista de contactos para que no le caiga encima
      */
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(
             name = "contact_point",
             joinColumns = @JoinColumn(name = "fk_point"),
