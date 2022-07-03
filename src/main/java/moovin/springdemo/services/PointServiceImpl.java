@@ -42,11 +42,17 @@ public class PointServiceImpl implements PointService {
     }
 
     @Override
-    public Optional<Point> updatePoint(Integer id, Point point) {
+    public PointResponse updatePoint(Integer id, PointInput pointInput) {
+        PointResponse pointResponse = new PointResponse();
         if (pointRepository.findById(id).isPresent()) {
-            return Optional.of(pointRepository.saveAndFlush(point));
+            pointResponse.setPoint(pointRepository.saveAndFlush(mapDtoToEntity(pointInput)));
+            pointResponse.setResult(Boolean.TRUE);
+            pointResponse.setStatus("SUCCESS");
+        } else {
+            pointResponse.setResult(Boolean.TRUE);
+            pointResponse.setStatus("NOTFOUNDPOINT");
         }
-        return Optional.empty();
+        return pointResponse;
     }
 
     @Override
@@ -60,6 +66,10 @@ public class PointServiceImpl implements PointService {
 
     private Point mapDtoToEntity(PointInput pointInput) {
         Point point = new Point();
+        if (pointInput.getId() != null && pointInput.getId() > 0) {
+            Optional<Point> pointFind = pointRepository.findById(pointInput.getId());
+            point = pointFind.orElse(point);
+        }
         point.setId(pointInput.getId());
         point.setLatitude(pointInput.getLatitude());
         point.setLongitude(pointInput.getLongitude());
@@ -67,13 +77,14 @@ public class PointServiceImpl implements PointService {
         if (point.getContacts() == null) {
             point.setContacts(new ArrayList<>());
         }
+        Point finalPoint = point;
         pointInput.getContacts().forEach(contact -> {
-            point.getContacts().add(contact);
+            finalPoint.getContacts().add(contact);
             if (contact.getPoints() == null) {
                 contact.setPoints(new ArrayList<>());
             }
-            contact.getPoints().add(point);
+            contact.getPoints().add(finalPoint);
         });
-        return point;
+        return finalPoint;
     }
 }

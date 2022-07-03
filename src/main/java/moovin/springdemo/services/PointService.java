@@ -11,7 +11,7 @@ public interface PointService {
 
     PointResponse createPoint(PointInput pointInput);
 
-    Optional<Point> updatePoint(Integer id, Point point);
+    PointResponse updatePoint(Integer id, PointInput pointInput);
 
     Optional<Integer> deletePoint(Integer id);
 }

@@ -61,4 +61,24 @@ public class PointController {
         pointResultDTO.setMessage("OK");
         return new ResponseEntity<>(pointResultDTO, httpStatus);
     }
+
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<PointResponse> updatePoint(@PathVariable Integer id,
+                                                     @Valid @RequestBody PointInput pointInput,
+                                                     Errors errors) {
+        HttpStatus httpStatus = HttpStatus.OK;
+        PointResponse pointResponse = new PointResponse();
+        if (errors.hasErrors()) {
+            pointResponse.setMessage("ERROR " + errors);
+            httpStatus = HttpStatus.BAD_REQUEST;
+            return new ResponseEntity<>(pointResponse, httpStatus);
+        }
+        try {
+            pointResponse = pointService.updatePoint(id, pointInput);
+        } catch (Exception ex) {
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<>(pointResponse, httpStatus);
+    }
 }

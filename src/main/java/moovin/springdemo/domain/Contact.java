@@ -92,17 +92,29 @@ public class Contact {
         this.type = type;
     }
 
+    @ManyToMany(
+            targetEntity = Point.class,
+            mappedBy = "contacts")
+    @JsonIgnore
+    public List<Point> getPoints() {
+        return points;
+    }
+
+    public void setPoints(List<Point> points) {
+        this.points = points;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Contact contact = (Contact) o;
-        return Objects.equals(id, contact.id) && Objects.equals(name, contact.name) && Objects.equals(lastName, contact.lastName) && Objects.equals(phone, contact.phone) && Objects.equals(cellPhone, contact.cellPhone) && Objects.equals(type, contact.type);
+        return Objects.equals(id, contact.id) && Objects.equals(name, contact.name) && Objects.equals(lastName, contact.lastName) && Objects.equals(phone, contact.phone) && Objects.equals(cellPhone, contact.cellPhone) && type == contact.type && Objects.equals(points, contact.points);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, lastName, phone, cellPhone, type);
+        return Objects.hash(id, name, lastName, phone, cellPhone, type, points);
     }
 
     @Override
@@ -113,17 +125,7 @@ public class Contact {
                 ", lastName='" + lastName + '\'' +
                 ", phone='" + phone + '\'' +
                 ", cellPhone='" + cellPhone + '\'' +
-                ", type='" + type + '\'' +
+                ", type=" + type +
                 '}';
-    }
-
-    @ManyToMany(mappedBy = "contacts")
-    @JsonIgnore
-    public List<Point> getPoints() {
-        return points;
-    }
-
-    public void setPoints(List<Point> points) {
-        this.points = points;
     }
 }
