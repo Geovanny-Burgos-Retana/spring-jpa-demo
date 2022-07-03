@@ -99,6 +99,7 @@ public class Point {
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 ", address='" + address + '\'' +
+                ", contacts=" + contacts +
                 '}';
     }
 

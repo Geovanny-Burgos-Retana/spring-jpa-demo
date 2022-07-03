@@ -126,6 +126,7 @@ public class Contact {
                 ", phone='" + phone + '\'' +
                 ", cellPhone='" + cellPhone + '\'' +
                 ", type=" + type +
+                ", points=" + points +
                 '}';
     }
 }
