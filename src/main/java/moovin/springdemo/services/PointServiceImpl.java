@@ -4,16 +4,17 @@ import moovin.springdemo.controllers.dto.general.point.PointInput;
 import moovin.springdemo.controllers.dto.response.point.PointResponse;
 import moovin.springdemo.domain.Point;
 import moovin.springdemo.repository.PointRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Service
 public class PointServiceImpl implements PointService {
+    private final static ModelMapper modelMapper = new ModelMapper();
     private final PointRepository pointRepository;
 
     @Autowired
@@ -30,7 +31,7 @@ public class PointServiceImpl implements PointService {
     public PointResponse createPoint(PointInput pointInput) {
         PointResponse pointResponse = new PointResponse();
         try {
-            Point point = mapDtoToEntity(pointInput);
+            Point point = modelMapper.map(pointInput, Point.class);
             pointResponse.setPoint(pointRepository.saveAndFlush(point));
             pointResponse.setResult(Boolean.TRUE);
             pointResponse.setStatus("SUCCESS");
@@ -45,7 +46,8 @@ public class PointServiceImpl implements PointService {
     public PointResponse updatePoint(Integer id, PointInput pointInput) {
         PointResponse pointResponse = new PointResponse();
         if (pointRepository.findById(id).isPresent()) {
-            pointResponse.setPoint(pointRepository.saveAndFlush(mapDtoToEntity(pointInput)));
+            Point point = modelMapper.map(pointInput, Point.class);
+            pointResponse.setPoint(pointRepository.saveAndFlush(point));
             pointResponse.setResult(Boolean.TRUE);
             pointResponse.setStatus("SUCCESS");
         } else {
@@ -62,29 +64,5 @@ public class PointServiceImpl implements PointService {
             return Optional.of(id);
         }
         return Optional.empty();
-    }
-
-    private Point mapDtoToEntity(PointInput pointInput) {
-        Point point = new Point();
-        if (pointInput.getId() != null && pointInput.getId() > 0) {
-            Optional<Point> pointFind = pointRepository.findById(pointInput.getId());
-            point = pointFind.orElse(point);
-        }
-        point.setId(pointInput.getId());
-        point.setLatitude(pointInput.getLatitude());
-        point.setLongitude(pointInput.getLongitude());
-        point.setAddress(pointInput.getAddress());
-        if (point.getContacts() == null) {
-            point.setContacts(new ArrayList<>());
-        }
-        Point finalPoint = point;
-        pointInput.getContacts().forEach(contact -> {
-            finalPoint.getContacts().add(contact);
-            if (contact.getPoints() == null) {
-                contact.setPoints(new ArrayList<>());
-            }
-            contact.getPoints().add(finalPoint);
-        });
-        return finalPoint;
     }
 }

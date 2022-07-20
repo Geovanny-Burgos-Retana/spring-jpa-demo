@@ -4,10 +4,10 @@ import moovin.springdemo.controllers.dto.general.contact.ContactInput;
 import moovin.springdemo.controllers.dto.response.contact.ContactResponse;
 import moovin.springdemo.domain.Contact;
 import moovin.springdemo.repository.ContactRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 
 @Service
 public class ContactServiceImpl implements ContactService {
+    private final static ModelMapper modelMapper = new ModelMapper();
     private final ContactRepository contactRepository;
 
     @Autowired
@@ -36,7 +37,7 @@ public class ContactServiceImpl implements ContactService {
     public ContactResponse createContact(ContactInput contactInput) {
         ContactResponse contactResponse = new ContactResponse();
         try {
-            Contact contact = mapDtoToEntity(contactInput);
+            Contact contact = modelMapper.map(contactInput, Contact.class);
             contactResponse.setContact(contactRepository.saveAndFlush(contact));
             contactResponse.setResult(Boolean.TRUE);
             contactResponse.setStatus("SUCCESS");
@@ -63,26 +64,5 @@ public class ContactServiceImpl implements ContactService {
             return Optional.of(id);
         }
         return Optional.empty();
-    }
-
-    private Contact mapDtoToEntity(ContactInput contactInput) {
-        Contact contact = new Contact();
-        contact.setId(contactInput.getId());
-        contact.setName(contactInput.getName());
-        contact.setLastName(contactInput.getLastName());
-        contact.setPhone(contactInput.getPhone());
-        contact.setCellPhone(contactInput.getCellPhone());
-        contact.setType(contactInput.getType());
-        if (contact.getPoints() == null) {
-            contact.setPoints(new ArrayList<>());
-        }
-        contactInput.getPoints().forEach(point -> {
-            contact.getPoints().add(point);
-            if (point.getContacts() == null) {
-                point.setContacts(new ArrayList<>());
-            }
-            point.getContacts().add(contact);
-        });
-        return contact;
     }
 }

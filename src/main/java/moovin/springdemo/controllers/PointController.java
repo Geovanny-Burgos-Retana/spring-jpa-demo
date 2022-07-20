@@ -1,5 +1,6 @@
 package moovin.springdemo.controllers;
 
+import lombok.extern.log4j.Log4j2;
 import moovin.springdemo.controllers.dto.PointResultDTO;
 import moovin.springdemo.controllers.dto.general.point.PointInput;
 import moovin.springdemo.controllers.dto.response.point.PointResponse;
@@ -16,6 +17,7 @@ import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
+@Log4j2
 @RequestMapping("/api/v1/point")
 public class PointController {
     private final PointService pointService;

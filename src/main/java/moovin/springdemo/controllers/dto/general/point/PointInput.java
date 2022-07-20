@@ -2,9 +2,11 @@ package moovin.springdemo.controllers.dto.general.point;
 
 import moovin.springdemo.domain.Contact;
 
+import javax.persistence.Id;
 import java.util.List;
 
 public class PointInput {
+    @Id
     private Integer id;
     private Double latitude;
     private Double longitude;
